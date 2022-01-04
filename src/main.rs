@@ -21,16 +21,14 @@ pub struct ProgramArguments
 }
 
 
-fn align_block(block: &String, arguments:&ProgramArguments) -> String 
+fn align_block(block: &str, arguments:&ProgramArguments) -> String 
 {
-    let block = block.strip_prefix("{").unwrap()
-                          .strip_suffix("}").unwrap();
+    let block = block.strip_prefix('{').unwrap()
+                          .strip_suffix('}').unwrap();
     
-    let lines = block.split(";")
+    let lines = block.split(';')
                                              .into_iter()
-                                             .filter(|line| 
-                                                      line.trim()
-                                                          .len() != 0);
+                                             .filter(|line| !line.trim().is_empty());
     
     let mut lefts  = Vec::new();
     let mut rights = Vec::new();
@@ -39,7 +37,7 @@ fn align_block(block: &String, arguments:&ProgramArguments) -> String
     
     for line in lines
     {
-        let parts:Vec<&str> = line.split(":").collect();
+        let parts:Vec<&str> = line.split(':').collect();
         
         let left_part  = parts[0].trim();
         let right_part = parts[1].trim();
@@ -56,27 +54,28 @@ fn align_block(block: &String, arguments:&ProgramArguments) -> String
     // Yea, I know it's very ugly. Left it as TODO
     for (left_part, right_part) in lefts.iter().zip(rights)
     {
-        new_block.push_str(&String::from(" ".repeat(arguments.ident as usize)));
-        new_block.push_str(&String::from(format!("{}", left_part)));
-        new_block.push_str(&String::from(" ".repeat(max_line_length - left_part.len())));
-        new_block.push_str(&String::from(" ".repeat(arguments.lmarging as usize)));
-        new_block.push_str(&String::from(":"));
-        new_block.push_str(&String::from(" ".repeat(arguments.rmarging as usize)));
-        new_block.push_str(&String::from(format!("{};\n", right_part)));
+        new_block.push_str(&" ".repeat(arguments.ident as usize));
+        new_block.push_str(left_part);
+        new_block.push_str(&" ".repeat(max_line_length - left_part.len()));
+        new_block.push_str(&" ".repeat(arguments.lmarging as usize));
+        new_block.push(':');
+        new_block.push_str(&" ".repeat(arguments.rmarging as usize));
+        new_block.push_str(&format!("{};\n", right_part));
     }
+    
     new_block += "}";      
                                 
     new_block
 }
 
-fn write_block(block: &String, file: &mut std::fs::File, arguments: &ProgramArguments) -> Result<(), std::io::Error>
+fn write_block(block: &str, file: &mut std::fs::File, arguments: &ProgramArguments) -> Result<(), std::io::Error>
 {
     let new_block = align_block(block, arguments);
     file.write_all(&new_block.as_bytes().to_vec())?;
     Ok(())
 }
 
-fn align_file(file: &std::path::PathBuf, arguments: &ProgramArguments) -> Result<(), std::io::Error> 
+fn align_file(file: &std::path::Path, arguments: &ProgramArguments) -> Result<(), std::io::Error> 
 {
     let orig = std::fs::File::open(file)?;
     
@@ -102,23 +101,21 @@ fn align_file(file: &std::path::PathBuf, arguments: &ProgramArguments) -> Result
             if character == '}'
             {  
                 is_reading_block = false;
-                write_block(&block, &mut aligned_file, &arguments)?;
+                write_block(&block, &mut aligned_file, arguments)?;
                 block.clear();
             }
         }
-        else 
+        else if character == '{'
         {
-            if character == '{'
-            {
-                is_reading_block = true;
-                block.clear();
-                block.push(character);
-            }
-            else
-            {
-                aligned_file.write_all(&vec![{character as u8}])?;
-            }
-        }  
+            is_reading_block = true;
+            block.clear();
+            block.push(character);
+        }
+        else
+        {
+            aligned_file.write_all(&[{character as u8}])?;
+        }
+ 
     }
     
     std::fs::remove_file(&file)?;
