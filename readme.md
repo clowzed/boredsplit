@@ -1,5 +1,5 @@
 # BOREDSPLIT
-
+[![Build](https://github.com/clowzed/boredsplit/actions/workflows/rust.yml/badge.svg)](https://github.com/clowzed/boredsplit/actions/workflows/rust.yml)
 ## See this. It's ugly!
 ```css
 body {
