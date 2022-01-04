@@ -23,8 +23,6 @@ body {
 1) Clone repository
 2) Run `cargo build --release`
 
-## Other variants?
-- Download from releases
 
 
 ## Params
