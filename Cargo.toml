@@ -1,0 +1,10 @@
+[package]
+name = "boredsplit"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+utf8-chars = "1.0.2"
+glob = "0.3.0"
+structopt = { version = "0.3", default-features = false }
+uuid = { version = "0.8", features = ["v4"] }
