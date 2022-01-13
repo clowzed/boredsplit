@@ -30,5 +30,5 @@ body {
 |-------|------------|---------|--------------------------------------|
 | -f    | --file     | `*.css` | Sets glob pattern for file searching |
 | -i    | --ident    | `4`     | Spaces before left part              |
-| -l    | --lmarging | `2`     | Left spaces near splitter            |
-| -r    | --rmarging | `2`     | Right spaces near splitter           |
+| -l    | --lmargin | `2`     | Left spaces near splitter            |
+| -r    | --rmargin | `2`     | Right spaces near splitter           |
